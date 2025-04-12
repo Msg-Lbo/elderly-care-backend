@@ -170,10 +170,20 @@ class WardListSerializer(serializers.ModelSerializer):
     ward_name = serializers.CharField(source='ward.user.username')
     ward_nickname = serializers.CharField(source='ward.nickname')
     ward_phone = serializers.CharField(source='ward.phone')
+    ward_avatar = serializers.SerializerMethodField()
 
     class Meta:
         model = Guardianship
-        fields = ['id', 'ward_id', 'ward_name', 'ward_nickname', 'ward_phone', 'relationship']
+        fields = ['id', 'ward_id', 'ward_name', 'ward_nickname', 'ward_phone', 'ward_avatar', 'relationship']
+
+    def get_ward_avatar(self, obj):
+        ward = obj.ward
+        if ward.avatar_file:
+            avatar_url = ward.avatar_file.url
+            if avatar_url.startswith('/upload/avatars/'):
+                avatar_url = avatar_url.replace('/upload/avatars/', '/upload/avatars/')
+            return avatar_url
+        return ward.avatar
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -191,13 +201,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'user', 'card_package', 'guardians', 'wards']
 
     def get_avatar(self, obj):
-        request = self.context.get('request')
         if obj.avatar_file:
             # 统一使用 /upload/avatar/ 作为头像路径前缀
             avatar_url = obj.avatar_file.url
             if avatar_url.startswith('/upload/avatars/'):
-                avatar_url = avatar_url.replace('/upload/avatars/', '/upload/avatar/')
-            return request.build_absolute_uri(avatar_url) if request else avatar_url
+                avatar_url = avatar_url.replace('/upload/avatars/', '/upload/avatars/')
+            return avatar_url
         return obj.avatar
 
 

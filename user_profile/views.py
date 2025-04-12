@@ -203,7 +203,7 @@ class UserProfileView(APIView):
         """
         try:
             profile = UserProfile.objects.get(user=request.user)
-            serializer = UserProfileSerializer(profile)
+            serializer = UserProfileSerializer(profile, context={'request': request})
             return Response({
                 'code': 200,
                 'message': '获取用户信息成功',
