@@ -181,7 +181,7 @@ class WardListSerializer(serializers.ModelSerializer):
         if ward.avatar_file:
             avatar_url = ward.avatar_file.url
             if avatar_url.startswith('/upload/avatars/'):
-                avatar_url = avatar_url.replace('/upload/avatars/', '/upload/avatars/')
+                avatar_url = avatar_url.replace('/upload/avatars/', '/upload/upload/avatars/')
             return avatar_url
         return ward.avatar
 
