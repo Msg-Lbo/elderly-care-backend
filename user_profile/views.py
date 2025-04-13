@@ -694,7 +694,6 @@ class CardPackageViewSet(viewsets.ModelViewSet):
             'data': serializer.data
         })
         
-    
     @action(detail=False, methods=['get'], url_path='get_card/(?P<card_id>[^/.]+)')
     def get_card(self, request, card_id):
         """获取指定卡片信息"""
@@ -745,7 +744,7 @@ class CardPackageViewSet(viewsets.ModelViewSet):
                 "data": None
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['post'], url_path='update_card/(?P<card_id>[^/.]+)')
     def update_card(self, request, card_id):
         """修改卡片信息"""
         try:
@@ -777,7 +776,7 @@ class CardPackageViewSet(viewsets.ModelViewSet):
                 "data": None
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['post'], url_path='remove_card/(?P<card_id>[^/.]+)')
     def remove_card(self, request, card_id):
         """从卡包中移除卡片"""
         try:
