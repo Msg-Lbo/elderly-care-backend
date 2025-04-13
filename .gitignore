@@ -4,4 +4,4 @@
 .vscode/
 .idea/
 .venv/
-
+upload/*

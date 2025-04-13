@@ -16,7 +16,6 @@ class ServiceListView(generics.ListAPIView):
         status_param = self.request.query_params.get('status', None)
         
         if status_param:
-            # 验证状态参数是否有效
             valid_statuses = [status[0] for status in Service.STATUS_CHOICES]
             if status_param not in valid_statuses:
                 raise ValidationError(f"无效的状态值。有效值为: {', '.join(valid_statuses)}")
@@ -57,10 +56,10 @@ class ServiceCreateView(generics.CreateAPIView):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response({
-                "code": 201,
+                "code": 200,
                 "message": "服务创建成功",
                 "data": serializer.data
-            }, status=status.HTTP_201_CREATED)
+            })
         except ValidationError as e:
             return Response({
                 "code": 400,
@@ -77,8 +76,16 @@ class ServiceCreateView(generics.CreateAPIView):
 class ServiceUpdateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, id):
+    def post(self, request):
         try:
+            id = request.data.get('id')
+            if not id:
+                return Response({
+                    "code": 400,
+                    "message": "缺少服务ID",
+                    "data": None
+                }, status=status.HTTP_400_BAD_REQUEST)
+                
             instance = Service.objects.get(id=id)
             serializer = ServiceSerializer(instance, data=request.data, partial=True)
             serializer.is_valid(raise_exception=True)
@@ -110,8 +117,16 @@ class ServiceUpdateView(APIView):
 class ServiceDeleteView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, id):
+    def post(self, request):
         try:
+            id = request.data.get('id')
+            if not id:
+                return Response({
+                    "code": 400,
+                    "message": "缺少服务ID",
+                    "data": None
+                }, status=status.HTTP_400_BAD_REQUEST)
+                
             instance = Service.objects.get(id=id)
             instance.delete()
             return Response({
