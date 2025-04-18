@@ -580,10 +580,15 @@ class UserProfileUpdateView(APIView):
     def post(self, request):
         try:
             user_profile = request.user.profile
-            # print("前端来的", request.data['avatar'])
+            
+            # 记录有哪些字段需要更新
+            updated_fields = []
+            
             # 更新昵称
             if 'nickname' in request.data:
                 user_profile.nickname = request.data['nickname']
+                updated_fields.append('nickname')
+            
             # 更新头像
             if 'avatar' in request.data:
                 # 删除旧头像
@@ -592,14 +597,27 @@ class UserProfileUpdateView(APIView):
                         default_storage.delete(user_profile.avatar.path)
                     except:
                         pass
-                # 直接设置新头像路径，不进行文件保存
+                # 直接设置新头像路径
                 user_profile.avatar = request.data['avatar']
+                updated_fields.append('avatar')
+                
+            # 更新其他个人资料字段
+            for field in ['health_id', 'phone', 'blood_pressure', 'blood_sugar', 
+                          'blood_oxygen', 'temperature', 'weight']:
+                if field in request.data:
+                    setattr(user_profile, field, request.data[field])
+                    updated_fields.append(field)
+            
+            # 确保更改被保存到数据库
             user_profile.save()
+            
+            # 重新获取用户资料以确认更新
+            user_profile = UserProfile.objects.get(id=user_profile.id)
             serializer = UserProfileSerializer(user_profile)
-            # print("后端返回的", serializer.data['avatar'])
+            
             return Response({
                 "code": 200,
-                "message": "用户资料更新成功",
+                "message": f"用户资料更新成功，更新了以下字段: {', '.join(updated_fields)}",
                 "data": serializer.data
             })
         except Exception as e:
