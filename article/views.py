@@ -13,8 +13,8 @@ from .serializers import (
 class CategoryListView(APIView):
     """文章分类视图"""
 
-    permission_classes = [IsAuthenticated]
-
+    permission_classes = []
+    authentication_classes = []
     def get(self, request):
         """获取所有文章分类"""
         try:
@@ -33,7 +33,8 @@ class CategoryListView(APIView):
 class ArticleListView(APIView):
     """文章列表视图"""
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
+    authentication_classes = []
 
     def get(self, request):
         """获取文章列表"""
@@ -97,8 +98,8 @@ class ArticleListView(APIView):
 class ArticleDetailView(APIView):
     """文章详情视图"""
 
-    permission_classes = [IsAuthenticated]
-
+    permission_classes = []
+    authentication_classes = []
     def get(self, request, pk):
         """获取文章详情"""
         try:

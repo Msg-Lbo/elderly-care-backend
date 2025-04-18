@@ -580,7 +580,7 @@ class UserProfileUpdateView(APIView):
     def post(self, request):
         try:
             user_profile = request.user.profile
-            print("前端来的", request.data['avatar'])
+            # print("前端来的", request.data['avatar'])
             # 更新昵称
             if 'nickname' in request.data:
                 user_profile.nickname = request.data['nickname']
@@ -596,7 +596,7 @@ class UserProfileUpdateView(APIView):
                 user_profile.avatar = request.data['avatar']
             user_profile.save()
             serializer = UserProfileSerializer(user_profile)
-            print("后端返回的", serializer.data['avatar'])
+            # print("后端返回的", serializer.data['avatar'])
             return Response({
                 "code": 200,
                 "message": "用户资料更新成功",
